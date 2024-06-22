@@ -14,6 +14,7 @@ import {
   useColorModeValue,
 } from '@chakra-ui/react';
 import { FaMoon, FaSun, FaFileCode, FaPlay } from 'react-icons/fa';
+import { FaFolderOpen, FaSearch, FaGitAlt, FaPuzzlePiece } from 'react-icons/fa';
 
 const App = () => {
   const { colorMode, toggleColorMode } = useColorMode();
@@ -30,49 +31,46 @@ const App = () => {
         {/* Header */}
         <Flex as="header" px="6" py="4" bg={headerBg} color={headerColor} alignItems="center" justifyContent="space-between">
           <HStack spacing="4">
-            <IconButton
-              icon={colorMode === 'light' ? <FaMoon /> : <FaSun />}
-              onClick={toggleColorMode}
-              variant="ghost"
-              size="md"
-              aria-label="Toggle Color Mode"
-              _hover={{ transform: 'rotate(360deg)' }}
-            />
             <Heading size="md">Wandi Code</Heading>
+            <Tooltip label="Toggle Color Mode">
+              <IconButton
+                icon={colorMode === 'light' ? <FaMoon /> : <FaSun />}
+                onClick={toggleColorMode}
+                variant="ghost"
+                size="sm"
+                aria-label="Toggle Color Mode"
+              />
+            </Tooltip>
           </HStack>
           <HStack spacing="4">
-            <IconButton
-              icon={<FaPlay />}
-              variant="ghost"
-              size="md"
-              aria-label="Run Code"
-              _hover={{ transform: 'scale(1.2)' }}
-            />
-            <Button variant="ghost" size="md" leftIcon={<FaFileCode />} _hover={{ textDecoration: 'underline' }}>
-              Docs
-            </Button>
-            <Button variant="ghost" size="md" leftIcon={<FaFileCode />} _hover={{ textDecoration: 'underline' }}>
-              Help
-            </Button>
+            <Tooltip label="Run Code">
+              <IconButton icon={<FaPlay />} variant="ghost" size="sm" aria-label="Run Code" />
+            </Tooltip>
+            <Tooltip label="Open Documentation">
+              <Button variant="ghost" size="sm">Docs</Button>
+            </Tooltip>
+            <Tooltip label="Help">
+              <Button variant="ghost" size="sm">Help</Button>
+            </Tooltip>
           </HStack>
         </Flex>
 
         {/* Main Content */}
         <Flex flex="1">
           {/* Sidebar */}
-          <VStack as="nav" width="64" bg={sidebarBg} color="gray.200" p="4" spacing="4" _hover={{ bg: sidebarHoverBg }}>
-            <Button variant="ghost" size="md" leftIcon={<FaFileCode />} _hover={{ textDecoration: 'underline' }}>
-              Explorer
-            </Button>
-            <Button variant="ghost" size="md" leftIcon={<FaFileCode />} _hover={{ textDecoration: 'underline' }}>
-              Search
-            </Button>
-            <Button variant="ghost" size="md" leftIcon={<FaFileCode />} _hover={{ textDecoration: 'underline' }}>
-              Git
-            </Button>
-            <Button variant="ghost" size="md" leftIcon={<FaFileCode />} _hover={{ textDecoration: 'underline' }}>
-              Extensions
-            </Button>
+          <VStack as="nav" width="100" bg={sidebarBg} color="gray.200" p="4" spacing="4" _hover={{ bg: sidebarHoverBg }}>
+            <Tooltip label="Explorer">
+              <Button variant="ghost" size="sm" width="100%"><FaFolderOpen /></Button>
+            </Tooltip>
+            <Tooltip label="Search">
+              <Button variant="ghost" size="sm" width="100%"><FaSearch /></Button>
+            </Tooltip>
+            <Tooltip label="Git">
+              <Button variant="ghost" size="sm" width="100%"><FaGitAlt /></Button>
+            </Tooltip>
+            <Tooltip label="Extensions">
+              <Button variant="ghost" size="sm" width="100%"><FaPuzzlePiece /></Button>
+            </Tooltip>
           </VStack>
 
           {/* Editor and Output */}
