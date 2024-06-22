@@ -9,12 +9,25 @@ import {
   Button,
   IconButton,
   Tooltip,
-  Divider,
   useColorMode,
   useColorModeValue,
 } from '@chakra-ui/react';
-import { FaMoon, FaSun, FaFileCode, FaPlay } from 'react-icons/fa';
-import { FaFolderOpen, FaSearch, FaGitAlt, FaPuzzlePiece } from 'react-icons/fa';
+import { 
+  FaMoon, 
+  FaSun, 
+  FaFileCode, 
+  FaPlay, 
+  FaLanguage, 
+  FaCode, 
+  FaThemeco, 
+  FaFolderOpen, 
+  FaSearch, 
+  FaGitAlt, 
+  FaPuzzlePiece, 
+  FaFileAlt, 
+  FaSave, 
+  FaTimes 
+} from 'react-icons/fa';
 
 const App = () => {
   const { colorMode, toggleColorMode } = useColorMode();
@@ -24,6 +37,7 @@ const App = () => {
   const sidebarHoverBg = useColorModeValue('gray.300', 'gray.700');
   const headerBg = useColorModeValue('blue.600', 'blue.900');
   const headerColor = useColorModeValue('white', 'gray.200');
+  const toolbarBg = useColorModeValue('gray.200', 'gray.800');
 
   return (
     <Box bg={bg} color={color} height="100vh">
@@ -55,18 +69,34 @@ const App = () => {
           </HStack>
         </Flex>
 
+        {/* Toolbar */}
+        <HStack as="nav" bg={toolbarBg} color="gray.200" p="4" spacing="4">
+          <Tooltip label="New File">
+            <IconButton icon={<FaFileAlt />} variant="ghost" size="sm" aria-label="New File" />
+          </Tooltip>
+          <Tooltip label="Save File">
+            <IconButton icon={<FaSave />} variant="ghost" size="sm" aria-label="Save File" />
+          </Tooltip>
+          <Tooltip label="Close File">
+            <IconButton icon={<FaTimes />} variant="ghost" size="sm" aria-label="Close File" />
+          </Tooltip>
+        </HStack>
+
         {/* Main Content */}
         <Flex flex="1">
           {/* Sidebar */}
           <VStack as="nav" width="100" bg={sidebarBg} color="gray.200" p="4" spacing="4" _hover={{ bg: sidebarHoverBg }}>
+            <Tooltip label="Language">
+              <Button variant="ghost" size="sm" width="100%"><FaCode /></Button>
+            </Tooltip>
+            <Tooltip label="Tema">
+              <Button variant="ghost" size="sm" width="100%"><FaThemeco /></Button>
+            </Tooltip>
             <Tooltip label="Explorer">
               <Button variant="ghost" size="sm" width="100%"><FaFolderOpen /></Button>
             </Tooltip>
             <Tooltip label="Search">
               <Button variant="ghost" size="sm" width="100%"><FaSearch /></Button>
-            </Tooltip>
-            <Tooltip label="Git">
-              <Button variant="ghost" size="sm" width="100%"><FaGitAlt /></Button>
             </Tooltip>
             <Tooltip label="Extensions">
               <Button variant="ghost" size="sm" width="100%"><FaPuzzlePiece /></Button>
