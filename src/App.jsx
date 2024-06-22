@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Box,
   Flex,
@@ -39,6 +39,22 @@ const App = () => {
   const headerColor = useColorModeValue('white', 'gray.200');
   const toolbarBg = useColorModeValue('gray.200', 'gray.800');
 
+  const [files, setFiles] = useState([]);
+  const [activeFile, setActiveFile] = useState(null);
+
+  const createFile = () => {
+    const newFile = `file${files.length + 1}.txt`;
+    setFiles([...files, newFile]);
+    setActiveFile(newFile);
+  };
+
+  const closeFile = (file) => {
+    setFiles(files.filter(f => f !== file));
+    if (activeFile === file) {
+      setActiveFile(files.length > 1 ? files[0] : null);
+    }
+  };
+
   return (
     <Box bg={bg} color={color} height="100vh">
       <Flex direction="column" height="100%">
@@ -69,22 +85,20 @@ const App = () => {
           </HStack>
         </Flex>
 
-        {/* Toolbar */}
+        {/* Barra de tarefas */}
         <HStack as="nav" bg={toolbarBg} color="gray.200" p="4" spacing="4">
           <Tooltip label="New File">
-            <IconButton icon={<FaFileAlt />} variant="ghost" size="sm" aria-label="New File" />
+            <IconButton icon={<FaFileAlt />} variant="ghost" size="sm" aria-label="New File" onClick={createFile} />
           </Tooltip>
           <Tooltip label="Save File">
             <IconButton icon={<FaSave />} variant="ghost" size="sm" aria-label="Save File" />
           </Tooltip>
-          <Tooltip label="Close File">
-            <IconButton icon={<FaTimes />} variant="ghost" size="sm" aria-label="Close File" />
-          </Tooltip>
         </HStack>
+
 
         {/* Main Content */}
         <Flex flex="1">
-          {/* Sidebar */}
+          {/* Sidebar Esquerdo */}
           <VStack as="nav" width="100" bg={sidebarBg} color="gray.200" p="4" spacing="4" _hover={{ bg: sidebarHoverBg }}>
             <Tooltip label="Language">
               <Button variant="ghost" size="sm" width="100%"><FaCode /></Button>
@@ -96,12 +110,36 @@ const App = () => {
 
           {/* Editor and Output */}
           <Flex flex="1" direction="column">
+
+            {/* Arquivos criados */}
+
+          <HStack>
+        {files.map((file) => (
+            <HStack key={file} spacing="0">
+              <Button variant="ghost" size="sm" onClick={() => setActiveFile(file)}>
+                {file}
+              </Button>
+              <IconButton icon={<FaTimes />} variant="ghost" size="sm" aria-label="Close File" onClick={() => closeFile(file)} />
+            </HStack>
+          ))}
+        </HStack>
+
+            {/* Editor*/}
             <Box flex="1" p="4" bg={bg} color={color} mx="4" borderRadius="md" boxShadow="md">
-              <Heading size="sm">Welcome to Wandi Code!</Heading>
-              <Text mt="2">Here are some instructions to get started:</Text>
-              <Text mt="2">1. Choose an option from the left sidebar.</Text>
-              <Text mt="2">2. Enter your code in the central editor.</Text>
-              <Text mt="2">3. See the compilation output on the right.</Text>
+              {activeFile ? (
+                <>
+                  <Heading size="sm">{activeFile}</Heading>
+                  <Text mt="2">This is the editor for {activeFile}.</Text>
+                </>
+              ) : (
+                <>
+                  <Heading size="sm">Welcome to Wandi Code!</Heading>
+                  <Text mt="2">Here are some instructions to get started:</Text>
+                  <Text mt="2">1. Choose an option from the left sidebar.</Text>
+                  <Text mt="2">2. Enter your code in the central editor.</Text>
+                  <Text mt="2">3. See the compilation output on the right.</Text>
+                </>
+              )}
             </Box>
             <Box bg={bg} color={color} p="4" mt="4" borderRadius="md" boxShadow="md">
               {/* Compilation output here */}
