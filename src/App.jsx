@@ -12,6 +12,14 @@ import {
   useColorMode,
   useColorModeValue,
   Input,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
+  Select, // Import Select component from Chakra UI
 } from '@chakra-ui/react';
 import {
   FaMoon,
@@ -20,7 +28,6 @@ import {
   FaPlay,
   FaLanguage,
   FaCode,
-  FaThemeco,
   FaFolderOpen,
   FaSearch,
   FaGitAlt,
@@ -41,39 +48,83 @@ const App = () => {
   const headerColor = useColorModeValue('white', 'gray.200');
   const toolbarBg = useColorModeValue('gray.200', 'gray.800');
 
+  // Estado para gerenciar arquivos e seus conteúdos
   const [files, setFiles] = useState([]);
   const [activeFile, setActiveFile] = useState(null);
-  const [fileContent, setFileContent] = useState('');
+  const [fileContents, setFileContents] = useState({});
+  const [isNewFileDialogOpen, setNewFileDialogOpen] = useState(false); // Estado para controlar a abertura do modal de novo arquivo
+  const [isCloseFileModalOpen, setCloseFileModalOpen] = useState(false); // Estado para controlar a abertura do modal de fechar arquivo
+  const [newFileName, setNewFileName] = useState(''); // Estado para armazenar o nome do novo arquivo
+  const [newFileLanguage, setNewFileLanguage] = useState('plaintext'); // Estado para armazenar a linguagem do novo arquivo
+
+  // Estado para controlar a visibilidade do explorador de arquivos
   const [isFileExplorerVisible, setIsFileExplorerVisible] = useState(true);
 
+  // Função para abrir o modal de novo arquivo
+  const openNewFileDialog = () => {
+    setNewFileName('');
+    setNewFileDialogOpen(true);
+  };
+
+  // Função para criar um novo arquivo
   const createFile = () => {
-    const newFile = `file${files.length + 1}.txt`;
+    if (newFileName.trim() === '') return; // Evita criar arquivo sem nome
+    const newFile = `${newFileName}.${newFileLanguage}`;
     setFiles([...files, newFile]);
     setActiveFile(newFile);
-    setFileContent('');
+    setFileContents({ ...fileContents, [newFile]: '' }); // Inicializa o conteúdo do novo arquivo como vazio
+    setNewFileDialogOpen(false); // Fecha o modal de novo arquivo após a criação
   };
 
-  const closeFile = (file) => {
-    setFiles(files.filter(f => f !== file));
-    if (activeFile === file) {
-      setActiveFile(files.length > 1 ? files[0] : null);
-    }
+  // Função para fechar o modal de novo arquivo
+  const closeNewFileDialog = () => {
+    setNewFileDialogOpen(false);
   };
 
+  // Função para abrir o modal de confirmação ao fechar um arquivo
+  const openCloseFileModal = (file) => {
+    setActiveFile(file); // Define o arquivo ativo para fechamento
+    setCloseFileModalOpen(true); // Abre o modal de confirmação
+  };
+
+  // Função para fechar o modal de confirmação ao fechar um arquivo
+  const closeCloseFileModal = () => {
+    setCloseFileModalOpen(false); // Fecha o modal de confirmação
+    setActiveFile(null); // Limpa o arquivo ativo após o fechamento
+  };
+
+  // Função para fechar um arquivo
+  const closeFile = () => {
+    const updatedFiles = files.filter(f => f !== activeFile);
+    setFiles(updatedFiles);
+    setCloseFileModalOpen(false); // Fecha o modal após o fechamento do arquivo
+    setActiveFile(null); // Limpa o arquivo ativo após o fechamento
+    const { [activeFile]: deleted, ...remainingContents } = fileContents;
+    setFileContents(remainingContents);
+  };
+
+  // Função para salvar o conteúdo do arquivo ativo
   const handleSaveFile = () => {
-    if (!activeFile) return;
+    if (!activeFile || !fileContents[activeFile]) return;
 
-    const blob = new Blob([fileContent], { type: 'text/plain' });
+    const blob = new Blob([fileContents[activeFile]], { type: 'text/plain' });
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
     link.download = activeFile;
     link.click();
   };
 
+  // Função para atualizar o conteúdo do arquivo ativo
+  const handleFileContentChange = (content) => {
+    if (activeFile) {
+      setFileContents({ ...fileContents, [activeFile]: content });
+    }
+  };
+
   return (
     <Box bg={bg} color={color} height="100vh">
       <Flex direction="column" height="100%">
-        {/* Header */}
+        {/* Cabeçalho */}
         <Flex as="header" px="6" py="4" bg={headerBg} color={headerColor} alignItems="center" justifyContent="space-between">
           <HStack spacing="4">
             <Heading size="md">Wandi Code</Heading>
@@ -102,27 +153,24 @@ const App = () => {
 
         {/* Barra de Ferramentas */}
         <HStack as="nav" bg={toolbarBg} color="gray.200" p="4" spacing="4">
-          <Tooltip label="New File">
-            <IconButton icon={<FaFileAlt />} variant="ghost" size="sm" aria-label="New File" onClick={createFile} />
+          <Tooltip label="Language">
+              <Button variant="ghost" size="sm" onClick={openNewFileDialog}><FaCode /></Button>
           </Tooltip>
           <Tooltip label="Save File">
             <IconButton icon={<FaSave />} variant="ghost" size="sm" aria-label="Save File" onClick={handleSaveFile} />
           </Tooltip>
         </HStack>
 
-        {/* Main Content */}
+        {/* Conteúdo Principal */}
         <Flex flex="1">
-          {/* Sidebar Esquerdo */}
+          {/* Barra Lateral Esquerda */}
           <VStack as="nav" width="100px" bg={sidebarBg} color="gray.200" p="4" spacing="4" _hover={{ bg: sidebarHoverBg }}>
-            <Tooltip label="Language">
-              <Button variant="ghost" size="sm" width="100%"><FaCode /></Button>
-            </Tooltip>
             <Tooltip label="Explorer">
               <Button variant="ghost" size="sm" width="100%" onClick={() => setIsFileExplorerVisible(!isFileExplorerVisible)}><FaFolderOpen /></Button>
             </Tooltip>
           </VStack>
 
-          {/* Sidebar de Arquivos */}
+          {/* Explorador de Arquivos */}
           {isFileExplorerVisible && (
             <VStack as="nav" width="200px" bg={sidebarBg} color="gray.200" p="4" spacing="4" _hover={{ bg: sidebarHoverBg }}>
               <Heading size="sm">Files</Heading>
@@ -137,14 +185,14 @@ const App = () => {
                     justifyContent="space-between"
                   >
                     {file}
-                    <IconButton icon={<FaTimes />} variant="ghost" size="xs" aria-label="Close File" onClick={() => closeFile(file)} />
+                    <IconButton icon={<FaTimes />} variant="ghost" size="xs" aria-label="Close File" onClick={() => openCloseFileModal(file)} />
                   </Button>
                 </HStack>
               ))}
             </VStack>
           )}
 
-          {/* Editor and Output */}
+          {/* Editor e Saída */}
           <Flex flex="1" direction="column">
             {/* Arquivos Criados */}
             <HStack spacing="4" p="4" bg={toolbarBg} borderBottom="1px solid" borderColor={sidebarHoverBg}>
@@ -169,8 +217,8 @@ const App = () => {
                   <Heading size="sm">{activeFile}</Heading>
                   <Input
                     mt="2"
-                    value={fileContent}
-                    onChange={(e) => setFileContent(e.target.value)}
+                    value={fileContents[activeFile]}
+                    onChange={(e) => handleFileContentChange(e.target.value)}
                     placeholder="Type your code here..."
                     size="sm"
                   />
@@ -186,17 +234,69 @@ const App = () => {
               )}
             </Box>
             <Box bg={bg} color={color} p="4" mt="4" borderRadius="md" boxShadow="md">
-              {/* Compilation output here */}
-              <Text fontSize="sm">Compilation Output</Text>
+              {/* Saída da Compilação aqui */}
+              <Text fontSize="sm">Saída da Compilação</Text>
             </Box>
           </Flex>
         </Flex>
 
-        {/* Footer */}
+        {/* Rodapé */}
         <Box as="footer" p="4" bg={headerBg} color={headerColor} textAlign="center">
-          <Text fontSize="sm">&copy; {new Date().getFullYear()} Wandi Code. All rights reserved.</Text>
+          <Text fontSize="sm">&copy; {new Date().getFullYear()} Wandi Code. Todos os direitos reservados.</Text>
         </Box>
       </Flex>
+
+      {/* Modal para Novo Arquivo */}
+      <Modal isOpen={isNewFileDialogOpen} onClose={closeNewFileDialog} isCentered>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Criar Novo Arquivo</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <Input
+              placeholder="Digite o nome do arquivo"
+              value={newFileName}
+              onChange={(e) => setNewFileName(e.target.value)}
+            />
+            <Select
+              mt="2"
+              value={newFileLanguage}
+              onChange={(e) => setNewFileLanguage(e.target.value)}
+            >
+              <option value="txt">Plain Text</option>
+              <option value="js">JavaScript</option>
+              <option value="ts">TypeScript</option>
+              <option value="py">Python</option>
+            </Select>
+          </ModalBody>
+
+          <ModalFooter>
+            <Button colorScheme="blue" mr={3} onClick={createFile}>
+              Criar
+            </Button>
+            <Button variant="ghost" onClick={closeNewFileDialog}>Cancelar</Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+
+      {/* Modal para Fechar Arquivo */}
+      <Modal isOpen={isCloseFileModalOpen} onClose={closeCloseFileModal} isCentered>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Fechar Arquivo</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <Text>Deseja realmente fechar o arquivo "{activeFile}"?</Text>
+          </ModalBody>
+
+          <ModalFooter>
+            <Button colorScheme="blue" mr={3} onClick={closeFile}>
+              Fechar
+            </Button>
+            <Button variant="ghost" onClick={closeCloseFileModal}>Cancelar</Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </Box>
   );
 };
