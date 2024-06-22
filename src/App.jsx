@@ -89,17 +89,8 @@ const App = () => {
             <Tooltip label="Language">
               <Button variant="ghost" size="sm" width="100%"><FaCode /></Button>
             </Tooltip>
-            <Tooltip label="Tema">
-              <Button variant="ghost" size="sm" width="100%"><FaThemeco /></Button>
-            </Tooltip>
             <Tooltip label="Explorer">
               <Button variant="ghost" size="sm" width="100%"><FaFolderOpen /></Button>
-            </Tooltip>
-            <Tooltip label="Search">
-              <Button variant="ghost" size="sm" width="100%"><FaSearch /></Button>
-            </Tooltip>
-            <Tooltip label="Extensions">
-              <Button variant="ghost" size="sm" width="100%"><FaPuzzlePiece /></Button>
             </Tooltip>
           </VStack>
 
