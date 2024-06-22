@@ -267,9 +267,7 @@ const App = () => {
             <Box flex="1" p="4" bg={bg} color={color} mx="4" borderRadius="md" boxShadow="md">
               {activeFile ? (
                 <>
-                  <Heading size="sm">{activeFile}</Heading>
                   <Editor
-                    height="60vh"
                     language={newFileLanguage}
                     theme="vs-dark"
                     value={fileContents[activeFile]}
