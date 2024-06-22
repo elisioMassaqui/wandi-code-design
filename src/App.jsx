@@ -156,17 +156,35 @@ return (
     <Flex flex="1">
       <VStack as="nav" width="100px" bg={sidebarBg} color="gray.200" p="4" spacing="4" _hover={{ bg: sidebarHoverBg }}>
       <Tooltip label="Language">
-        <Button variant="ghost" size="sm" onClick={openNewFileDialog}>
+        <IconButton
+        isRound={true}
+        variant='solid'
+        colorScheme='teal'
+        aria-label='Done'
+        fontSize='25px'
+        onClick={openNewFileDialog}>
           <FaCode />
-        </Button>
+        </IconButton>
       </Tooltip>
       <Tooltip label="Save File">
-        <IconButton icon={<FaSave />} variant="ghost" size="sm" aria-label="Save File" onClick={handleSaveFile} />
+        <IconButton icon={<FaSave />} 
+        isRound={true}
+        variant='solid'
+        colorScheme='teal'
+        aria-label='Done'
+        fontSize='25px'
+         onClick={handleSaveFile} />
       </Tooltip>
         <Tooltip label="Explorer">
-          <Button variant="ghost" size="sm" width="100%" onClick={openFileDrawer}>
+          <IconButton 
+        isRound={true}
+        variant='solid'
+        colorScheme='teal'
+        aria-label='Done'
+        fontSize='25px'
+          onClick={openFileDrawer}>
             <FaFolderOpen />
-          </Button>
+          </IconButton>
         </Tooltip>
       </VStack>
 
@@ -244,7 +262,7 @@ return (
 
   <Modal isOpen={isNewFileDialogOpen} onClose={closeNewFileDialog} isCentered>
     <ModalOverlay />
-    <ModalContent>
+    <ModalContent >
       <ModalHeader>Create New File</ModalHeader>
       <ModalCloseButton />
       <ModalBody>
@@ -262,7 +280,9 @@ return (
         <Button colorScheme="blue" mr={3} onClick={createFile}>
           Create
         </Button>
-        <Button variant="ghost" onClick={closeNewFileDialog}>Cancel</Button>
+        <Button variant="ghost" onClick={closeNewFileDialog}>
+          Cancel
+        </Button>
       </ModalFooter>
     </ModalContent>
   </Modal>
