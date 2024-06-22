@@ -11,22 +11,24 @@ import {
   Tooltip,
   useColorMode,
   useColorModeValue,
+  Input,
 } from '@chakra-ui/react';
-import { 
-  FaMoon, 
-  FaSun, 
-  FaFileCode, 
-  FaPlay, 
-  FaLanguage, 
-  FaCode, 
-  FaThemeco, 
-  FaFolderOpen, 
-  FaSearch, 
-  FaGitAlt, 
-  FaPuzzlePiece, 
-  FaFileAlt, 
-  FaSave, 
-  FaTimes 
+import {
+  FaMoon,
+  FaSun,
+  FaFileCode,
+  FaPlay,
+  FaLanguage,
+  FaCode,
+  FaThemeco,
+  FaFolderOpen,
+  FaSearch,
+  FaGitAlt,
+  FaPuzzlePiece,
+  FaFileAlt,
+  FaSave,
+  FaTimes,
+  FaBars,
 } from 'react-icons/fa';
 
 const App = () => {
@@ -41,11 +43,14 @@ const App = () => {
 
   const [files, setFiles] = useState([]);
   const [activeFile, setActiveFile] = useState(null);
+  const [fileContent, setFileContent] = useState('');
+  const [isFileExplorerVisible, setIsFileExplorerVisible] = useState(true);
 
   const createFile = () => {
     const newFile = `file${files.length + 1}.txt`;
     setFiles([...files, newFile]);
     setActiveFile(newFile);
+    setFileContent('');
   };
 
   const closeFile = (file) => {
@@ -53,6 +58,16 @@ const App = () => {
     if (activeFile === file) {
       setActiveFile(files.length > 1 ? files[0] : null);
     }
+  };
+
+  const handleSaveFile = () => {
+    if (!activeFile) return;
+
+    const blob = new Blob([fileContent], { type: 'text/plain' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = activeFile;
+    link.click();
   };
 
   return (
@@ -85,51 +100,80 @@ const App = () => {
           </HStack>
         </Flex>
 
-        {/* Barra de tarefas */}
+        {/* Barra de Ferramentas */}
         <HStack as="nav" bg={toolbarBg} color="gray.200" p="4" spacing="4">
           <Tooltip label="New File">
             <IconButton icon={<FaFileAlt />} variant="ghost" size="sm" aria-label="New File" onClick={createFile} />
           </Tooltip>
           <Tooltip label="Save File">
-            <IconButton icon={<FaSave />} variant="ghost" size="sm" aria-label="Save File" />
+            <IconButton icon={<FaSave />} variant="ghost" size="sm" aria-label="Save File" onClick={handleSaveFile} />
           </Tooltip>
         </HStack>
-
 
         {/* Main Content */}
         <Flex flex="1">
           {/* Sidebar Esquerdo */}
-          <VStack as="nav" width="100" bg={sidebarBg} color="gray.200" p="4" spacing="4" _hover={{ bg: sidebarHoverBg }}>
+          <VStack as="nav" width="100px" bg={sidebarBg} color="gray.200" p="4" spacing="4" _hover={{ bg: sidebarHoverBg }}>
             <Tooltip label="Language">
               <Button variant="ghost" size="sm" width="100%"><FaCode /></Button>
             </Tooltip>
             <Tooltip label="Explorer">
-              <Button variant="ghost" size="sm" width="100%"><FaFolderOpen /></Button>
+              <Button variant="ghost" size="sm" width="100%" onClick={() => setIsFileExplorerVisible(!isFileExplorerVisible)}><FaFolderOpen /></Button>
             </Tooltip>
           </VStack>
 
+          {/* Sidebar de Arquivos */}
+          {isFileExplorerVisible && (
+            <VStack as="nav" width="200px" bg={sidebarBg} color="gray.200" p="4" spacing="4" _hover={{ bg: sidebarHoverBg }}>
+              <Heading size="sm">Files</Heading>
+              {files.map((file) => (
+                <HStack key={file} spacing="0" width="100%">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setActiveFile(file)}
+                    bg={activeFile === file ? sidebarHoverBg : 'transparent'}
+                    width="100%"
+                    justifyContent="space-between"
+                  >
+                    {file}
+                    <IconButton icon={<FaTimes />} variant="ghost" size="xs" aria-label="Close File" onClick={() => closeFile(file)} />
+                  </Button>
+                </HStack>
+              ))}
+            </VStack>
+          )}
+
           {/* Editor and Output */}
           <Flex flex="1" direction="column">
-
-            {/* Arquivos criados */}
-
-          <HStack>
-        {files.map((file) => (
-            <HStack key={file} spacing="0">
-              <Button variant="ghost" size="sm" onClick={() => setActiveFile(file)}>
-                {file}
-              </Button>
-              <IconButton icon={<FaTimes />} variant="ghost" size="sm" aria-label="Close File" onClick={() => closeFile(file)} />
+            {/* Arquivos Criados */}
+            <HStack spacing="4" p="4" bg={toolbarBg} borderBottom="1px solid" borderColor={sidebarHoverBg}>
+              {files.map((file) => (
+                <HStack key={file} spacing="0">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setActiveFile(file)}
+                    bg={activeFile === file ? sidebarHoverBg : 'transparent'}
+                  >
+                    {file}
+                  </Button>
+                </HStack>
+              ))}
             </HStack>
-          ))}
-        </HStack>
 
-            {/* Editor*/}
+            {/* Editor */}
             <Box flex="1" p="4" bg={bg} color={color} mx="4" borderRadius="md" boxShadow="md">
               {activeFile ? (
                 <>
                   <Heading size="sm">{activeFile}</Heading>
-                  <Text mt="2">This is the editor for {activeFile}.</Text>
+                  <Input
+                    mt="2"
+                    value={fileContent}
+                    onChange={(e) => setFileContent(e.target.value)}
+                    placeholder="Type your code here..."
+                    size="sm"
+                  />
                 </>
               ) : (
                 <>
