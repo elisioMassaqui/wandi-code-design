@@ -52,6 +52,7 @@ const App = () => {
   const [files, setFiles] = useState([]);
   const [activeFile, setActiveFile] = useState(null);
   const [fileContents, setFileContents] = useState({});
+  const [fileLanguages, setFileLanguages] = useState({}); // New state to store file languages
   const [isNewFileDialogOpen, setNewFileDialogOpen] = useState(false);
   const [isCloseFileModalOpen, setCloseFileModalOpen] = useState(false);
   const [newFileName, setNewFileName] = useState('');
@@ -72,6 +73,7 @@ const App = () => {
     setFiles([...files, newFile]);
     setActiveFile(newFile);
     setFileContents({ ...fileContents, [newFile]: '' }); // Initialize with empty content
+    setFileLanguages({ ...fileLanguages, [newFile]: newFileLanguage }); // Store language
     setNewFileDialogOpen(false);
   };
 
@@ -94,8 +96,10 @@ const App = () => {
     setFiles(updatedFiles);
     setCloseFileModalOpen(false);
     setActiveFile(null);
-    const { [activeFile]: deleted, ...remainingContents } = fileContents;
+    const { [activeFile]: deletedContent, ...remainingContents } = fileContents;
+    const { [activeFile]: deletedLanguage, ...remainingLanguages } = fileLanguages;
     setFileContents(remainingContents);
+    setFileLanguages(remainingLanguages);
   };
 
   const handleSaveFile = () => {
@@ -248,6 +252,7 @@ const App = () => {
             </DrawerContent>
           </Drawer>
 
+
           <Flex flex="1" direction="column">
             <HStack spacing="4" p="4" bg={toolbarBg} borderBottom="1px solid" borderColor={sidebarHoverBg}>
               {files.map((file) => (
@@ -268,7 +273,7 @@ const App = () => {
               {activeFile ? (
                 <>
                   <Editor
-                    language={newFileLanguage}
+                    language={fileLanguages[activeFile]} // Use the specific language for the active file
                     theme="vs-dark"
                     value={fileContents[activeFile]}
                     onChange={handleFileContentChange}
