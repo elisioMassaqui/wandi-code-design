@@ -1,5 +1,7 @@
 Wandi Code Design - Frontend Design
 
+![Splash Screen](https://github.com/elisioMassaqui/wandi-code-design/blob/master/Anota%C3%A7%C3%A3o%202024-06-24%20120931.png)
+
 Overview
 Wandi Code - Frontend Design é uma aplicação web focada no design de interface de usuário frontend, construída com React e estilizada com Chakra UI. Este projeto visa proporcionar uma experiência visual e interativa para a criação de layouts e componentes de frontend, inspirado em ambientes de desenvolvimento modernos.
 
