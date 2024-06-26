@@ -1,42 +1,24 @@
-import React from 'react';
-import {
-  Flex,
-  HStack,
-  Heading,
-  IconButton,
-  Tooltip,
-} from '@chakra-ui/react';
-import { FaMoon, FaSun, FaPlay } from 'react-icons/fa';
+// components/Header.js
 
-const Header = ({ colorMode, toggleColorMode }) => (
-  <Flex
-    as="header"
-    px="6"
-    py="4"
-    bg={colorMode === 'light' ? 'blue.600' : 'blue.900'}
-    color={colorMode === 'light' ? 'white' : 'gray.200'}
-    alignItems="center"
-    justifyContent="space-between"
-  >
-    <HStack spacing="4">
+import React from 'react';
+import { Flex, Heading, IconButton, Tooltip } from '@chakra-ui/react';
+import { FaMoon, FaSun } from 'react-icons/fa';
+
+const Header = ({ toggleColorMode }) => {
+  return (
+    <Flex as="header" px="6" py="4" bg="blue.600" color="white" alignItems="center" justifyContent="space-between">
       <Heading size="md">Wandi Code</Heading>
       <Tooltip label="Toggle Color Mode">
         <IconButton
-          icon={colorMode === 'light' ? <FaMoon /> : <FaSun />}
+          icon={<FaMoon />}
           onClick={toggleColorMode}
           variant="ghost"
           size="sm"
           aria-label="Toggle Color Mode"
         />
       </Tooltip>
-    </HStack>
-    <HStack spacing="4">
-      <Tooltip label="Run Code">
-        <IconButton icon={<FaPlay />} variant="ghost" size="sm" aria-label="Run Code" />
-      </Tooltip>
-      {/* Add more buttons as needed */}
-    </HStack>
-  </Flex>
-);
+    </Flex>
+  );
+};
 
 export default Header;
